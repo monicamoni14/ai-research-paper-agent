@@ -1,51 +1,27 @@
-from pathlib import Path
-
 from pdf_reader import extract_text_from_pdf
+from text_processor import clean_text, split_text_into_chunks
 
+pdf_path = "samplePaperForProject.pdf"
 
-def main():
+# Step 1: Extract text from PDF
+extracted_text = extract_text_from_pdf(pdf_path)
 
-    print("=" * 60)
-    print("AI RESEARCH PAPER-TO-EXPERIMENT AGENT")
-    print("=" * 60)
+# Step 2: Clean extracted text
+cleaned_text = clean_text(extracted_text)
 
-    # Project information
-    project_name = "AI Research Paper-to-Experiment Agent"
+# Step 3: Split cleaned text into chunks
+chunks = split_text_into_chunks(
+    cleaned_text,
+    chunk_size=1500,
+    overlap=200
+)
 
-    print("\nProject:", project_name)
+# Display results
+print("Original text length:", len(extracted_text))
+print("Cleaned text length:", len(cleaned_text))
+print("Total chunks:", len(chunks))
 
-    # Locate the research paper
-    pdf_path = Path(__file__).parent / "samplePaperForProject.pdf"
-
-    print("\nReading research paper...")
-
-    try:
-
-        # Extract text from PDF
-        extracted_text = extract_text_from_pdf(str(pdf_path))
-
-        if not extracted_text.strip():
-            print("Warning: No extractable text found in the PDF.")
-            return
-
-        print("\nPDF extraction successful!")
-
-        # Display extraction information
-        print("Extracted characters:", len(extracted_text))
-
-        print("\nFirst 1000 characters:")
-        print("-" * 60)
-
-        print(extracted_text[:1000])
-
-        print("\n" + "=" * 60)
-        print("PDF PROCESSING COMPLETED")
-        print("=" * 60)
-
-    except (FileNotFoundError, ValueError) as error:
-
-        print("\nError:", error)
-
-
-if __name__ == "__main__":
-    main()
+for index, chunk in enumerate(chunks):
+    print(f"\nChunk {index + 1}")
+    print("Characters:", len(chunk))
+    print("Content:", chunk[:200])
